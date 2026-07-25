@@ -107,67 +107,20 @@ class SoundManager {
     }
   }
 
-  /// Announces "Round [round]" using the localized word for "round".
-  /// Cancels any speech still in progress (iOS stops at `.immediate`).
-  Future<void> speakRound(
-    int round, {
-    required bool soundEnabled,
-    required String languageCode,
-  }) async {
+  /// Announces "Round [round]" via TTS — always in English, matching the iOS
+  /// app (which speaks English regardless of the selected UI language).
+  /// Cancels any speech still in progress.
+  Future<void> speakRound(int round, {required bool soundEnabled}) async {
     if (!soundEnabled) return;
 
     try {
       await _tts.stop();
-      await _tts.setLanguage(_ttsLocale(languageCode));
+      await _tts.setLanguage('en-US');
       await _tts.setSpeechRate(0.5);
       await _tts.setVolume(1.0);
-      await _tts.speak('${_roundWord(languageCode)} $round');
+      await _tts.speak('Round $round');
     } catch (e) {
       debugPrint('SoundManager: could not speak round: $e');
-    }
-  }
-
-  String _ttsLocale(String languageCode) {
-    switch (languageCode) {
-      case 'de':
-        return 'de-DE';
-      case 'ar':
-        return 'ar-SA';
-      case 'es':
-        return 'es-ES';
-      case 'fr':
-        return 'fr-FR';
-      case 'ru':
-        return 'ru-RU';
-      case 'pt':
-        return 'pt-BR';
-      case 'en':
-      default:
-        return 'en-US';
-    }
-  }
-
-  /// Localized "round" word. NOTE: iOS `speakRound` is currently hardcoded
-  /// to English regardless of app language (ModelsAndStubs.swift:238-239) —
-  /// a known, not-yet-fixed bug there. This Android port deliberately does
-  /// better and speaks the user's actual language.
-  String _roundWord(String languageCode) {
-    switch (languageCode) {
-      case 'de':
-        return 'Runde';
-      case 'ar':
-        return 'جولة';
-      case 'es':
-        return 'Ronda';
-      case 'ru':
-        return 'Раунд';
-      case 'fr':
-        return 'Round';
-      case 'pt':
-        return 'Rodada';
-      case 'en':
-      default:
-        return 'Round';
     }
   }
 }

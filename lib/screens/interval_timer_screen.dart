@@ -62,7 +62,6 @@ class _IntervalTimerScreenState extends State<IntervalTimerScreen>
   Widget build(BuildContext context) {
     final LanguageManager lang = context.watch<LanguageManager>();
     final Translations t = lang.t;
-    _c.ttsLanguageCode = lang.current.code;
 
     return AnimatedBuilder(
       animation: _c,

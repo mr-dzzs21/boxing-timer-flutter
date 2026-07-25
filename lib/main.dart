@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/design_system.dart';
 import 'core/language_manager.dart';
@@ -9,7 +8,6 @@ import 'screens/donation_screen.dart';
 import 'screens/fight_timer_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/interval_timer_screen.dart';
-import 'screens/onboarding_screen.dart';
 import 'screens/stats_screen.dart';
 import 'screens/stopwatch_screen.dart';
 import 'screens/todo_screen.dart';
@@ -35,10 +33,6 @@ Future<void> main() async {
   await prompts.load();
   final DonationManager donations = DonationManager();
 
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final bool onboardingCompleted =
-      prefs.getBool('onboardingCompleted') ?? false;
-
   await todos.recordAppOpen();
   if (settings.todoNotificationsEnabled) {
     await todos.scheduleReminderIfNeeded();
@@ -51,7 +45,6 @@ Future<void> main() async {
     profiles: profiles,
     prompts: prompts,
     donations: donations,
-    showOnboarding: !onboardingCompleted,
   ));
 }
 
@@ -64,7 +57,6 @@ class BoxTimerApp extends StatelessWidget {
     required this.profiles,
     required this.prompts,
     required this.donations,
-    required this.showOnboarding,
   });
 
   final UserSettings settings;
@@ -73,7 +65,6 @@ class BoxTimerApp extends StatelessWidget {
   final ProfileManager profiles;
   final PromptManager prompts;
   final DonationManager donations;
-  final bool showOnboarding;
 
   @override
   Widget build(BuildContext context) {
@@ -111,34 +102,11 @@ class BoxTimerApp extends StatelessWidget {
                 child: child ?? const SizedBox.shrink(),
               );
             },
-            home: _Root(showOnboarding: showOnboarding),
+            home: const RootTabs(),
           );
         },
       ),
     );
-  }
-}
-
-class _Root extends StatefulWidget {
-  const _Root({required this.showOnboarding});
-
-  final bool showOnboarding;
-
-  @override
-  State<_Root> createState() => _RootState();
-}
-
-class _RootState extends State<_Root> {
-  late bool _showOnboarding = widget.showOnboarding;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_showOnboarding) {
-      return OnboardingScreen(
-        onDone: () => setState(() => _showOnboarding = false),
-      );
-    }
-    return const RootTabs();
   }
 }
 

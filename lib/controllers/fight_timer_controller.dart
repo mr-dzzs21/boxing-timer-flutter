@@ -34,7 +34,6 @@ class FightTimerController extends ChangeNotifier {
   String? saveErrorMessage;
 
   UserSettings? settings;
-  String ttsLanguageCode = 'en';
   VoidCallback? onWorkoutSaved;
 
   TimerSessionEngine _engine;
@@ -97,7 +96,6 @@ class FightTimerController extends ChangeNotifier {
       _sound.speakRound(
         _lastSnapshot?.currentStep ?? 1,
         soundEnabled: _soundOn,
-        languageCode: ttsLanguageCode,
       );
     }
     notifyListeners();
@@ -281,7 +279,6 @@ class FightTimerController extends ChangeNotifier {
         _sound.speakRound(
           snapshot.currentStep,
           soundEnabled: _soundOn,
-          languageCode: ttsLanguageCode,
         );
         break;
       case TimerPhase.rest:

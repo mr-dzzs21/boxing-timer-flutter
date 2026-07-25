@@ -54,7 +54,6 @@ class _FightTimerScreenState extends State<FightTimerScreen>
   Widget build(BuildContext context) {
     final LanguageManager lang = context.watch<LanguageManager>();
     final Translations t = lang.t;
-    _c.ttsLanguageCode = lang.current.code;
 
     return AnimatedBuilder(
       animation: _c,
