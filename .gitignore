@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android release signing — NEVER commit these (keystore + passwords).
+# Losing the keystore only means resetting the *upload* key via Play support
+# (Play App Signing holds the real key), but the password file is a plaintext
+# secret regardless. Back both up somewhere safe outside the repo.
+/android/key.properties
+**/*.jks
+**/*.keystore

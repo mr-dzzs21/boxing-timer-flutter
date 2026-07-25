@@ -28,8 +28,25 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
   assets:
     - assets/sounds/
+
+# App launcher icon generation (run: dart run flutter_launcher_icons).
+# Adaptive (round-maskable) icon so it matches the circular system icons.
+# The source art is full-bleed, and adaptive icons only show the center ~66%
+# of the layer, so the clock (top-right) and glove tips get cropped — an
+# accepted trade-off for the consistent round shape. image_path still
+# generates a legacy square icon for pre-API-26 devices. Both adaptive layers
+# use the full image (foreground is opaque and full-bleed, so it fills the
+# masked area; background is a fallback only visible if a launcher insets).
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "assets/icon/app_icon.png"
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
