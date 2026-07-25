@@ -22,6 +22,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     super.initState();
+    // The root IndexedStack keeps this screen alive across tab switches, so
+    // initState only runs once — without this listener, a workout saved
+    // while this tab is in the background would never appear until the app
+    // restarts. See HistoryRepository's ChangeNotifier note.
+    HistoryRepository.instance.addListener(_onHistoryChanged);
+    _reload();
+  }
+
+  @override
+  void dispose() {
+    HistoryRepository.instance.removeListener(_onHistoryChanged);
+    super.dispose();
+  }
+
+  void _onHistoryChanged() {
+    if (!mounted) return;
     _reload();
   }
 

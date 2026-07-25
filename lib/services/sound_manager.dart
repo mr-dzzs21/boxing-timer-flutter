@@ -147,7 +147,10 @@ class SoundManager {
     }
   }
 
-  /// Localized "round" word, matching the iOS `phaseRound` translations.
+  /// Localized "round" word. NOTE: iOS `speakRound` is currently hardcoded
+  /// to English regardless of app language (ModelsAndStubs.swift:238-239) —
+  /// a known, not-yet-fixed bug there. This Android port deliberately does
+  /// better and speaks the user's actual language.
   String _roundWord(String languageCode) {
     switch (languageCode) {
       case 'de':
@@ -159,7 +162,9 @@ class SoundManager {
       case 'ru':
         return 'Раунд';
       case 'fr':
+        return 'Round';
       case 'pt':
+        return 'Rodada';
       case 'en':
       default:
         return 'Round';

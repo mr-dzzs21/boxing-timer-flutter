@@ -190,12 +190,17 @@ class IntervalTimerController extends ChangeNotifier {
       } else {
         await HistoryRepository.instance.update(record);
       }
+      // completeWorkout() calls this without awaiting it, so the screen
+      // (and this controller) may already be disposed by the time the
+      // save resolves — never touch state or notify after that.
+      if (_disposed) return true;
       hasSavedCurrentWorkout = true;
       saveErrorMessage = null;
       if (isFirstSave) onWorkoutSaved?.call();
       notifyListeners();
       return true;
     } catch (e) {
+      if (_disposed) return false;
       saveErrorMessage = e.toString();
       notifyListeners();
       return false;
@@ -314,8 +319,11 @@ class IntervalTimerController extends ChangeNotifier {
     saveWorkoutToHistory(allowUpdate: true);
   }
 
+  bool _disposed = false;
+
   @override
   void dispose() {
+    _disposed = true;
     _stopTicker();
     WakelockPlus.disable();
     super.dispose();

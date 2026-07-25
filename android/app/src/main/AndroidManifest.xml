@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Debug/profile builds get this for free via the Flutter tool's own
+         debug manifest; release builds do NOT unless declared here. No
+         current feature needs raw sockets (Play Billing talks to the Play
+         Store app via IPC, not INTERNET), but this is declared explicitly
+         so a release build never silently loses network access. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>

@@ -1,12 +1,18 @@
 // Workout history persistence — Flutter port of the iOS Core Data stack
 // (Persistence.swift + WorkoutHistoryEntity). Schema mirrors WorkoutRecord.
 
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
 import 'package:boxing_timer_flutter/core/models.dart';
 
-class HistoryRepository {
+/// Extends ChangeNotifier so History/Stats screens can react the instant a
+/// workout is saved elsewhere (e.g. auto-saved by the timer on completion).
+/// Without this, screens kept alive by the root IndexedStack would only
+/// ever load data once in initState and never see later writes — a
+/// completed workout would look "lost" until the app is restarted.
+class HistoryRepository extends ChangeNotifier {
   HistoryRepository._();
 
   static final HistoryRepository instance = HistoryRepository._();
@@ -52,6 +58,7 @@ class HistoryRepository {
     final db = await _database;
     final id = await db.insert(_table, record.toMap());
     record.id = id;
+    notifyListeners();
     return id;
   }
 
@@ -67,16 +74,19 @@ class HistoryRepository {
       where: 'id = ?',
       whereArgs: <Object?>[id],
     );
+    notifyListeners();
   }
 
   Future<void> deleteById(int id) async {
     final db = await _database;
     await db.delete(_table, where: 'id = ?', whereArgs: <Object?>[id]);
+    notifyListeners();
   }
 
   Future<void> deleteAll() async {
     final db = await _database;
     await db.delete(_table);
+    notifyListeners();
   }
 
   /// All saved workouts, newest first (matches the iOS history fetch,

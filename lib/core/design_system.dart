@@ -520,15 +520,22 @@ class DSSelectableCard extends StatelessWidget {
             width: isSelected ? 2 : 1,
           ),
         ),
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.nunito(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isSelected ? Colors.white : DS.textSecondary,
+        // FittedBox scales the whole label down to fit one line instead of
+        // wrapping — a fixed font size would force a mid-word break on long
+        // translations (e.g. German "Fortgeschritten") with no space to
+        // wrap at. This keeps every language on one readable line.
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            softWrap: false,
+            style: GoogleFonts.nunito(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : DS.textSecondary,
+            ),
           ),
         ),
       ),

@@ -85,7 +85,9 @@ class BoxTimerApp extends StatelessWidget {
         ChangeNotifierProvider<ProfileManager>.value(value: profiles),
         ChangeNotifierProvider<PromptManager>.value(value: prompts),
         ChangeNotifierProvider<DonationManager>.value(value: donations),
-        Provider<HistoryRepository>.value(value: HistoryRepository.instance),
+        ChangeNotifierProvider<HistoryRepository>.value(
+          value: HistoryRepository.instance,
+        ),
       ],
       child: Consumer<LanguageManager>(
         builder: (BuildContext context, LanguageManager lang, _) {

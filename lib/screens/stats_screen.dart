@@ -22,11 +22,28 @@ class _StatsScreenState extends State<StatsScreen> {
   int _totalDuration = 0;
   int _last7Days = 0;
   int _streak = 0;
+  bool _has12RoundFightWorkout = false;
   String _favoriteSport = '—';
 
   @override
   void initState() {
     super.initState();
+    // Same rationale as HistoryScreen: the root IndexedStack keeps this
+    // screen alive across tab switches, so without this listener a newly
+    // completed workout would never update the stats/heatmap/achievements
+    // until the app restarts.
+    HistoryRepository.instance.addListener(_onHistoryChanged);
+    _reload();
+  }
+
+  @override
+  void dispose() {
+    HistoryRepository.instance.removeListener(_onHistoryChanged);
+    super.dispose();
+  }
+
+  void _onHistoryChanged() {
+    if (!mounted) return;
     _reload();
   }
 
@@ -65,6 +82,12 @@ class _StatsScreenState extends State<StatsScreen> {
       cursor = cursor.subtract(const Duration(days: 1));
     }
     _streak = streak;
+
+    // Matches iOS StatsViewModel.calculateAchievements: at least one Fight
+    // Timer workout with >=12 rounds (e.g. the default "Boxen" preset).
+    _has12RoundFightWorkout = _workouts.any(
+      (WorkoutRecord w) => w.rounds >= 12 && w.mode == modeFightTimer,
+    );
 
     final Map<String, int> counts = <String, int>{};
     for (final WorkoutRecord w in _workouts) {
@@ -163,22 +186,28 @@ class _StatsScreenState extends State<StatsScreen> {
                   scrollDirection: Axis.horizontal,
                   children: <Widget>[
                     _AchievementCard(
+                      // iOS: currentStreak >= 10 (a 10-day streak, not a
+                      // workout count — was wrongly mapped to workout count).
                       title: t.achievementWarriorTitle,
                       description: t.achievementWarriorDesc,
                       icon: Icons.sports_mma,
-                      unlocked: _totalWorkouts >= 10,
+                      unlocked: _streak >= 10,
                     ),
                     _AchievementCard(
+                      // iOS: totalDuration >= 28800s (8 hours total training
+                      // time, not a workout count).
                       title: t.achievementHardWorkerTitle,
                       description: t.achievementHardWorkerDesc,
                       icon: Icons.fitness_center,
-                      unlocked: _totalWorkouts >= 50,
+                      unlocked: _totalDuration >= 28800,
                     ),
                     _AchievementCard(
+                      // iOS: at least one Fight Timer workout with >=12
+                      // rounds (not the streak).
                       title: t.achievementProFighterTitle,
                       description: t.achievementProFighterDesc,
                       icon: Icons.emoji_events,
-                      unlocked: _streak >= 10,
+                      unlocked: _has12RoundFightWorkout,
                     ),
                   ],
                 ),
