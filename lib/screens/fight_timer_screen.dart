@@ -365,7 +365,17 @@ class _FightTimerScreenState extends State<FightTimerScreen>
                         DSPrimaryButton(
                           label: t.done,
                           onPressed: () {
-                            _c.updatePreset(selected);
+                            // Only apply (which resets the timer) if something
+                            // actually changed — otherwise opening the picker
+                            // mid-workout and tapping Done would silently wipe a
+                            // paused/in-progress session.
+                            final FightPreset cur = _c.currentPreset;
+                            final bool changed = selected.id != cur.id ||
+                                selected.warmupSeconds != cur.warmupSeconds ||
+                                selected.rounds != cur.rounds ||
+                                selected.roundSeconds != cur.roundSeconds ||
+                                selected.restSeconds != cur.restSeconds;
+                            if (changed) _c.updatePreset(selected);
                             Navigator.of(sheetContext).pop();
                           },
                         ),
