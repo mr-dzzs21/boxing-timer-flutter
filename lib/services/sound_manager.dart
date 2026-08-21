@@ -32,6 +32,7 @@ class SoundManager {
 
   final AudioPlayer _player = AudioPlayer();
   final AudioPlayer _warningPlayer = AudioPlayer();
+  final AudioPlayer _comboPlayer = AudioPlayer();
   final FlutterTts _tts = FlutterTts();
 
   bool _audioContextConfigured = false;
@@ -140,6 +141,37 @@ class SoundManager {
       await _tts.speak(phrase);
     } catch (e) {
       debugPrint('SoundManager: could not speak combo: $e');
+    }
+  }
+
+  /// Announces a combo. Prefers a bundled premium voice clip
+  /// (`assets/combos/1_2_3.mp3` for combo [1,2,3]) for the crispest, most
+  /// consistent sound; falls back to [speakCombo] (device TTS)
+  /// with [fallbackPhrase] when the clip isn't bundled, so the feature works
+  /// with or without the clips.
+  Future<void> playComboClip(
+    List<int> combo,
+    String fallbackPhrase, {
+    required bool soundEnabled,
+  }) async {
+    if (!soundEnabled) return;
+    final String rel = 'combos/${combo.join('_')}.mp3';
+    bool hasClip = true;
+    try {
+      await rootBundle.load('assets/$rel');
+    } catch (_) {
+      hasClip = false;
+    }
+    if (!hasClip) {
+      await speakCombo(fallbackPhrase, soundEnabled: soundEnabled);
+      return;
+    }
+    await _configureAudioContext();
+    try {
+      await _comboPlayer.stop();
+      await _comboPlayer.play(AssetSource(rel), volume: 1.0);
+    } catch (e) {
+      debugPrint('SoundManager: could not play combo clip: $e');
     }
   }
 }

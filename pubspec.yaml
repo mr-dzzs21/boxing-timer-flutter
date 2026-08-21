@@ -34,6 +34,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/sounds/
+    - assets/combos/
 
 # App launcher icon generation (run: dart run flutter_launcher_icons).
 # Adaptive (round-maskable) icon so it matches the circular system icons.

@@ -358,8 +358,10 @@ class FightTimerController extends ChangeNotifier {
     }
     if (now.difference(_lastComboTime!).inSeconds < _nextComboDelay) return;
 
-    _sound.speakCombo(
-      ComboTrainer.phraseFor(_comboTrainer.nextCombo()),
+    final List<int> combo = _comboTrainer.nextCombo();
+    _sound.playComboClip(
+      combo,
+      ComboTrainer.phraseFor(combo),
       soundEnabled: _soundOn,
     );
     _lastComboTime = now;
