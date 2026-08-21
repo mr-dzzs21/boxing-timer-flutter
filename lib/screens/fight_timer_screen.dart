@@ -265,6 +265,12 @@ class _FightTimerScreenState extends State<FightTimerScreen>
   }
 
   void _showPresetPicker() {
+    // Local working copy, mirrors the iOS PresetPickerView: tapping a preset
+    // only *selects* it, the steppers adjust this copy, and "Done" applies it
+    // via updatePreset. copyWith keeps the preset id, so the checkmark stays
+    // on the chosen base preset even after adjusting its values.
+    FightPreset selected = _c.currentPreset;
+
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: DS.surface,
@@ -273,46 +279,101 @@ class _FightTimerScreenState extends State<FightTimerScreen>
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext sheetContext) {
-        return Consumer2<LanguageManager, ProfileManager>(
-          builder: (BuildContext context, LanguageManager lang,
-              ProfileManager pm, _) {
-            final Translations t = lang.t;
-            return SafeArea(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.7,
-                ),
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(16),
-                  children: <Widget>[
-                    _sheetHeader(t.standardPresets),
-                    for (final FightPreset p in FightPreset.defaultPresets)
-                      _presetRow(
-                        lang.localizedPresetName(p.name),
-                        selected: _c.currentPreset.id == p.id,
-                        onTap: () {
-                          _c.updatePreset(p);
-                          Navigator.of(sheetContext).pop();
-                        },
-                      ),
-                    if (pm.customProfiles.isNotEmpty) ...<Widget>[
-                      const SizedBox(height: 12),
-                      _sheetHeader(t.customProfiles),
-                      for (final FightPreset p in pm.customProfiles)
-                        _presetRow(
-                          p.name,
-                          selected: _c.currentPreset.id == p.id,
-                          onTap: () {
-                            _c.updatePreset(p);
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setSheetState) {
+            return Consumer2<LanguageManager, ProfileManager>(
+              builder: (BuildContext context, LanguageManager lang,
+                  ProfileManager pm, _) {
+                final Translations t = lang.t;
+                return SafeArea(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    ),
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(16),
+                      children: <Widget>[
+                        _sheetHeader(t.standardPresets),
+                        for (final FightPreset p in FightPreset.defaultPresets)
+                          _presetRow(
+                            lang.localizedPresetName(p.name),
+                            selected: selected.id == p.id,
+                            onTap: () => setSheetState(() => selected = p),
+                          ),
+                        if (pm.customProfiles.isNotEmpty) ...<Widget>[
+                          const SizedBox(height: 12),
+                          _sheetHeader(t.customProfiles),
+                          for (final FightPreset p in pm.customProfiles)
+                            _presetRow(
+                              p.name,
+                              selected: selected.id == p.id,
+                              onTap: () => setSheetState(() => selected = p),
+                              onDelete: () {
+                                final bool wasSelected = selected.id == p.id;
+                                pm.remove(p.id);
+                                if (wasSelected) {
+                                  setSheetState(() =>
+                                      selected = FightPreset.defaultPresets.first);
+                                }
+                              },
+                            ),
+                        ],
+                        const SizedBox(height: 16),
+                        _sheetHeader(t.customizations),
+                        DSStepperRow(
+                          label: t.warmUp,
+                          value: selected.warmupSeconds,
+                          unit: 's',
+                          min: 0,
+                          max: 600,
+                          step: 5,
+                          onChanged: (int v) => setSheetState(
+                              () => selected = selected.copyWith(warmupSeconds: v)),
+                        ),
+                        DSStepperRow(
+                          label: t.rounds,
+                          value: selected.rounds,
+                          unit: 'x',
+                          min: 1,
+                          max: 20,
+                          step: 1,
+                          onChanged: (int v) => setSheetState(
+                              () => selected = selected.copyWith(rounds: v)),
+                        ),
+                        DSStepperRow(
+                          label: t.roundTime,
+                          value: selected.roundSeconds,
+                          unit: 's',
+                          min: 10,
+                          max: 900,
+                          step: 10,
+                          onChanged: (int v) => setSheetState(
+                              () => selected = selected.copyWith(roundSeconds: v)),
+                        ),
+                        DSStepperRow(
+                          label: t.rest,
+                          value: selected.restSeconds,
+                          unit: 's',
+                          min: 0,
+                          max: 600,
+                          step: 5,
+                          onChanged: (int v) => setSheetState(
+                              () => selected = selected.copyWith(restSeconds: v)),
+                        ),
+                        const SizedBox(height: 16),
+                        DSPrimaryButton(
+                          label: t.done,
+                          onPressed: () {
+                            _c.updatePreset(selected);
                             Navigator.of(sheetContext).pop();
                           },
-                          onDelete: () => pm.remove(p.id),
                         ),
-                    ],
-                  ],
-                ),
-              ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             );
           },
         );
