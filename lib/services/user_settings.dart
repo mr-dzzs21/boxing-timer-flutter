@@ -13,14 +13,14 @@ class UserSettings extends ChangeNotifier {
         _warningEnabled = _prefs.getBool(warningKey) ?? true,
         _todoNotificationsEnabled = _prefs.getBool(todoNotificationsKey) ?? false,
         _comboTrainerEnabled = _prefs.getBool(comboTrainerKey) ?? false,
-        _comboUseNames = _prefs.getBool(comboUseNamesKey) ?? false;
+        _comboIntervalSeconds = _prefs.getInt(comboIntervalKey) ?? 12;
 
   static const String soundKey = 'soundEnabled';
   static const String vibrationKey = 'vibrationEnabled';
   static const String warningKey = 'warningEnabled';
   static const String todoNotificationsKey = 'todoNotificationsEnabled';
   static const String comboTrainerKey = 'comboTrainerEnabled';
-  static const String comboUseNamesKey = 'comboUseNames';
+  static const String comboIntervalKey = 'comboIntervalSeconds';
 
   final SharedPreferences _prefs;
 
@@ -29,7 +29,7 @@ class UserSettings extends ChangeNotifier {
   bool _warningEnabled;
   bool _todoNotificationsEnabled;
   bool _comboTrainerEnabled;
-  bool _comboUseNames;
+  int _comboIntervalSeconds;
 
   bool get soundEnabled => _soundEnabled;
   bool get vibrationEnabled => _vibrationEnabled;
@@ -39,8 +39,8 @@ class UserSettings extends ChangeNotifier {
   /// Combo Trainer: announce random punch combos during rounds (default off).
   bool get comboTrainerEnabled => _comboTrainerEnabled;
 
-  /// Announce combos as names ("Jab, Cross") instead of numbers ("1 2").
-  bool get comboUseNames => _comboUseNames;
+  /// Base seconds between combo announcements (default 12).
+  int get comboIntervalSeconds => _comboIntervalSeconds;
 
   Future<void> setSoundEnabled(bool value) =>
       _updateSetting(soundKey, value, () => _soundEnabled = value, _soundEnabled);
@@ -57,8 +57,8 @@ class UserSettings extends ChangeNotifier {
   Future<void> setComboTrainerEnabled(bool value) => _updateSetting(
       comboTrainerKey, value, () => _comboTrainerEnabled = value, _comboTrainerEnabled);
 
-  Future<void> setComboUseNames(bool value) => _updateSetting(
-      comboUseNamesKey, value, () => _comboUseNames = value, _comboUseNames);
+  Future<void> setComboIntervalSeconds(int value) => _updateSetting(
+      comboIntervalKey, value, () => _comboIntervalSeconds = value, _comboIntervalSeconds);
 
   Future<void> _updateSetting<T>(
     String key,

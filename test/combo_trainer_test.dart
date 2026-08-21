@@ -11,33 +11,23 @@ void main() {
         final List<int> combo = t.nextCombo();
         expect(combo, isNotEmpty);
         expect(ComboTrainer.combos, contains(combo));
-        // every punch is a valid 1–6 number
         for (final int p in combo) {
           expect(ComboTrainer.punchNames.containsKey(p), isTrue);
         }
       }
     });
 
-    test('nextDelaySeconds stays within the requested range', () {
+    test('nextDelaySeconds stays at or just above the chosen base', () {
       final ComboTrainer t = ComboTrainer(random: Random(7));
       for (int i = 0; i < 200; i++) {
-        final int d = t.nextDelaySeconds(min: 8, max: 16);
-        expect(d, inInclusiveRange(8, 16));
+        final int d = t.nextDelaySeconds(12);
+        expect(d, inInclusiveRange(12, 14)); // base + 0..2 jitter
       }
     });
 
-    test('phraseFor renders numbers by default', () {
-      expect(
-        ComboTrainer.phraseFor(<int>[1, 2, 3], useNames: false),
-        '1 2 3',
-      );
-    });
-
-    test('phraseFor renders punch names when requested', () {
-      expect(
-        ComboTrainer.phraseFor(<int>[1, 2, 3], useNames: true),
-        'Jab, Cross, Lead Hook',
-      );
+    test('phraseFor renders punch names, never numbers', () {
+      expect(ComboTrainer.phraseFor(<int>[1, 2, 3]), 'Jab, Cross, Lead Hook');
+      expect(ComboTrainer.phraseFor(<int>[1, 6]), 'Jab, Rear Uppercut');
     });
 
     test('a seeded Random makes the sequence deterministic', () {

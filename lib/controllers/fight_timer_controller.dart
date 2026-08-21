@@ -57,7 +57,7 @@ class FightTimerController extends ChangeNotifier {
   bool get _vibrationOn => settings?.vibrationEnabled ?? true;
   bool get _warningOn => settings?.warningEnabled ?? true;
   bool get _comboOn => settings?.comboTrainerEnabled ?? false;
-  bool get _comboUseNames => settings?.comboUseNames ?? false;
+  int get _comboInterval => settings?.comboIntervalSeconds ?? 12;
 
   double get progress => _lastSnapshot?.progress ?? 0;
 
@@ -353,17 +353,17 @@ class FightTimerController extends ChangeNotifier {
     // announcement — the round-start bell/announcement just played.
     if (enteredRound || _lastComboTime == null) {
       _lastComboTime = now;
-      _nextComboDelay = _comboTrainer.nextDelaySeconds();
+      _nextComboDelay = _comboTrainer.nextDelaySeconds(_comboInterval);
       return;
     }
     if (now.difference(_lastComboTime!).inSeconds < _nextComboDelay) return;
 
     _sound.speakCombo(
-      ComboTrainer.phraseFor(_comboTrainer.nextCombo(), useNames: _comboUseNames),
+      ComboTrainer.phraseFor(_comboTrainer.nextCombo()),
       soundEnabled: _soundOn,
     );
     _lastComboTime = now;
-    _nextComboDelay = _comboTrainer.nextDelaySeconds();
+    _nextComboDelay = _comboTrainer.nextDelaySeconds(_comboInterval);
   }
 
   void _completeWorkout(DateTime now) {

@@ -133,7 +133,9 @@ class SoundManager {
     try {
       await _tts.stop();
       await _tts.setLanguage('en-US');
-      await _tts.setSpeechRate(0.55);
+      // A touch slower + neutral pitch reads the punch names more clearly.
+      await _tts.setSpeechRate(0.45);
+      await _tts.setPitch(1.0);
       await _tts.setVolume(1.0);
       await _tts.speak(phrase);
     } catch (e) {

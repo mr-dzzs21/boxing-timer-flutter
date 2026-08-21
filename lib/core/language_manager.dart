@@ -198,7 +198,7 @@ class Translations {
   final String vibrationEnabled;
   final String warningEnabled;
   final String comboTrainer;
-  final String comboUseNames;
+  final String comboInterval;
   final String language;
   final String about;
   final String version;
@@ -358,7 +358,7 @@ class Translations {
     required this.vibrationEnabled,
     required this.warningEnabled,
     required this.comboTrainer,
-    required this.comboUseNames,
+    required this.comboInterval,
     required this.language,
     required this.about,
     required this.version,
@@ -532,7 +532,7 @@ class Translations {
       vibrationEnabled: 'Vibration aktiviert',
       warningEnabled: '10-Sek. Warnsound',
       comboTrainer: 'Kombo-Trainer',
-      comboUseNames: 'Als Namen ansagen (Jab, Cross)',
+      comboInterval: 'Kombo-Intervall',
       language: 'Sprache',
       about: 'Über die App',
       version: 'Version',
@@ -685,7 +685,7 @@ class Translations {
       vibrationEnabled: 'Vibration enabled',
       warningEnabled: '10-sec. warning sound',
       comboTrainer: 'Combo Trainer',
-      comboUseNames: 'Announce as names (Jab, Cross)',
+      comboInterval: 'Combo interval',
       language: 'Language',
       about: 'About',
       version: 'Version',
@@ -837,7 +837,7 @@ class Translations {
       vibrationEnabled: 'تفعيل الاهتزاز',
       warningEnabled: 'صوت تحذير 10 ثوانٍ',
       comboTrainer: 'مدرب التوليفات',
-      comboUseNames: 'النطق بالأسماء (Jab, Cross)',
+      comboInterval: 'الفاصل بين التوليفات',
       language: 'اللغة',
       about: 'عن التطبيق',
       version: 'الإصدار',
@@ -989,7 +989,7 @@ class Translations {
       vibrationEnabled: 'Vibración activada',
       warningEnabled: 'Sonido de aviso 10 seg.',
       comboTrainer: 'Entrenador de combos',
-      comboUseNames: 'Anunciar por nombres (Jab, Cross)',
+      comboInterval: 'Intervalo de combos',
       language: 'Idioma',
       about: 'Acerca de',
       version: 'Versión',
@@ -1143,7 +1143,7 @@ class Translations {
       vibrationEnabled: 'Vibration activée',
       warningEnabled: "Son d'avertissement 10 sec.",
       comboTrainer: 'Entraîneur de combos',
-      comboUseNames: 'Annoncer par noms (Jab, Cross)',
+      comboInterval: 'Intervalle des combos',
       language: 'Langue',
       about: 'À propos',
       version: 'Version',
@@ -1299,7 +1299,7 @@ class Translations {
       vibrationEnabled: 'Вибрация включена',
       warningEnabled: 'Предупредительный звук 10 сек.',
       comboTrainer: 'Тренажёр комбинаций',
-      comboUseNames: 'Объявлять названиями (Jab, Cross)',
+      comboInterval: 'Интервал комбинаций',
       language: 'Язык',
       about: 'О приложении',
       version: 'Версия',
@@ -1452,7 +1452,7 @@ class Translations {
       vibrationEnabled: 'Vibração ativada',
       warningEnabled: 'Som de aviso 10 seg.',
       comboTrainer: 'Treinador de combos',
-      comboUseNames: 'Anunciar por nomes (Jab, Cross)',
+      comboInterval: 'Intervalo de combos',
       language: 'Idioma',
       about: 'Sobre',
       version: 'Versão',

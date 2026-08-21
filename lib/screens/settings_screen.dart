@@ -58,8 +58,16 @@ class SettingsScreen extends StatelessWidget {
                         settings.setComboTrainerEnabled),
                     if (settings.comboTrainerEnabled) ...<Widget>[
                       const Divider(color: DS.divider, height: 1),
-                      _toggle(t.comboUseNames, settings.comboUseNames,
-                          settings.setComboUseNames),
+                      DSStepperRow(
+                        label: t.comboInterval,
+                        value: settings.comboIntervalSeconds,
+                        unit: 's',
+                        min: 4,
+                        max: 30,
+                        step: 2,
+                        onChanged: (int v) =>
+                            settings.setComboIntervalSeconds(v),
+                      ),
                     ],
                   ]),
                   const SizedBox(height: 20),

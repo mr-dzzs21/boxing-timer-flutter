@@ -39,16 +39,12 @@ class ComboTrainer {
   /// A random combination as a list of punch numbers.
   List<int> nextCombo() => combos[_random.nextInt(combos.length)];
 
-  /// Seconds to wait before the next combo, randomized within [min, max].
-  int nextDelaySeconds({int min = 8, int max = 16}) =>
-      min + _random.nextInt(max - min + 1);
+  /// Seconds to wait before the next combo: the user-chosen [baseSeconds]
+  /// plus 0–2s of jitter so the rhythm feels natural rather than metronomic.
+  int nextDelaySeconds(int baseSeconds) => baseSeconds + _random.nextInt(3);
 
-  /// Spoken phrase for [combo]. [useNames] picks "Jab, Cross, Lead Hook" over
-  /// the numeric "1 2 3". Always English, matching the round announcements.
-  static String phraseFor(List<int> combo, {required bool useNames}) {
-    if (useNames) {
-      return combo.map((int n) => punchNames[n] ?? '$n').join(', ');
-    }
-    return combo.join(' ');
-  }
+  /// Spoken phrase for [combo] as punch names, e.g. "Jab, Cross, Lead Hook".
+  /// Always English, matching the round announcements.
+  static String phraseFor(List<int> combo) =>
+      combo.map((int n) => punchNames[n] ?? '$n').join(', ');
 }
