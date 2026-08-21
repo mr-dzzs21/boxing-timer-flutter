@@ -124,5 +124,5 @@ Optionale Trinkgeld-Funktion zur Unterstützung der Entwicklung — völlig frei
 ## Store assets (in this folder / repo)
 - App icon 512×512: `docs/play-store/icon-512.png`
 - Phone screenshots (1080×2424, need 2–8): `docs/screenshots/01..06-*.png`
-- Feature graphic 1024×500: **still needed** — a simple banner (logo + app name on
-  the red→green brand gradient). Not yet created; can be designed separately.
+- Feature graphic 1024×500: `docs/play-store/feature-graphic-1024x500.png` ✓
+  (icon + app name on the dark red→green brand gradient)
