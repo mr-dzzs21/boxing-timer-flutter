@@ -7,21 +7,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 10-second warning are ON by default; todo notifications are OFF until the
 /// user enables them.
 class UserSettings extends ChangeNotifier {
-  UserSettings._(
-    this._prefs, {
-    required bool soundEnabled,
-    required bool vibrationEnabled,
-    required bool warningEnabled,
-    required bool todoNotificationsEnabled,
-  })  : _soundEnabled = soundEnabled,
-        _vibrationEnabled = vibrationEnabled,
-        _warningEnabled = warningEnabled,
-        _todoNotificationsEnabled = todoNotificationsEnabled;
+  UserSettings(this._prefs)
+      : _soundEnabled = _prefs.getBool(soundKey) ?? true,
+        _vibrationEnabled = _prefs.getBool(vibrationKey) ?? true,
+        _warningEnabled = _prefs.getBool(warningKey) ?? true,
+        _todoNotificationsEnabled = _prefs.getBool(todoNotificationsKey) ?? false;
 
-  static const String _soundKey = 'soundEnabled';
-  static const String _vibrationKey = 'vibrationEnabled';
-  static const String _warningKey = 'warningEnabled';
-  static const String _todoNotificationsKey = 'todoNotificationsEnabled';
+  static const String soundKey = 'soundEnabled';
+  static const String vibrationKey = 'vibrationEnabled';
+  static const String warningKey = 'warningEnabled';
+  static const String todoNotificationsKey = 'todoNotificationsEnabled';
 
   final SharedPreferences _prefs;
 
@@ -35,42 +30,35 @@ class UserSettings extends ChangeNotifier {
   bool get warningEnabled => _warningEnabled;
   bool get todoNotificationsEnabled => _todoNotificationsEnabled;
 
-  static Future<UserSettings> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    return UserSettings._(
-      prefs,
-      soundEnabled: prefs.getBool(_soundKey) ?? true,
-      vibrationEnabled: prefs.getBool(_vibrationKey) ?? true,
-      warningEnabled: prefs.getBool(_warningKey) ?? true,
-      todoNotificationsEnabled: prefs.getBool(_todoNotificationsKey) ?? false,
-    );
-  }
+  Future<void> setSoundEnabled(bool value) =>
+      _updateSetting(soundKey, value, () => _soundEnabled = value, _soundEnabled);
 
-  Future<void> setSoundEnabled(bool value) async {
-    if (_soundEnabled == value) return;
-    _soundEnabled = value;
-    notifyListeners();
-    await _prefs.setBool(_soundKey, value);
-  }
+  Future<void> setVibrationEnabled(bool value) =>
+      _updateSetting(vibrationKey, value, () => _vibrationEnabled = value, _vibrationEnabled);
 
-  Future<void> setVibrationEnabled(bool value) async {
-    if (_vibrationEnabled == value) return;
-    _vibrationEnabled = value;
-    notifyListeners();
-    await _prefs.setBool(_vibrationKey, value);
-  }
+  Future<void> setWarningEnabled(bool value) =>
+      _updateSetting(warningKey, value, () => _warningEnabled = value, _warningEnabled);
 
-  Future<void> setWarningEnabled(bool value) async {
-    if (_warningEnabled == value) return;
-    _warningEnabled = value;
-    notifyListeners();
-    await _prefs.setBool(_warningKey, value);
-  }
+  Future<void> setTodoNotificationsEnabled(bool value) =>
+      _updateSetting(todoNotificationsKey, value, () => _todoNotificationsEnabled = value, _todoNotificationsEnabled);
 
-  Future<void> setTodoNotificationsEnabled(bool value) async {
-    if (_todoNotificationsEnabled == value) return;
-    _todoNotificationsEnabled = value;
+  Future<void> _updateSetting<T>(
+    String key,
+    T value,
+    void Function() updateState,
+    T currentValue,
+  ) async {
+    if (currentValue == value) return;
+    updateState();
     notifyListeners();
-    await _prefs.setBool(_todoNotificationsKey, value);
+    if (value is bool) {
+      await _prefs.setBool(key, value);
+    } else if (value is String) {
+      await _prefs.setString(key, value);
+    } else if (value is int) {
+      await _prefs.setInt(key, value);
+    } else if (value is double) {
+      await _prefs.setDouble(key, value);
+    }
   }
 }

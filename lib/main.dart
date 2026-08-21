@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'core/design_system.dart';
 import 'core/language_manager.dart';
 import 'screens/donation_screen.dart';
@@ -22,21 +24,23 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting();
 
-  final UserSettings settings = await UserSettings.load();
-  final LanguageManager language = LanguageManager();
-  await language.load();
-  final TodoManager todos = TodoManager();
-  await todos.load();
-  final ProfileManager profiles = ProfileManager();
-  await profiles.load();
-  final PromptManager prompts = PromptManager();
-  await prompts.load();
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+  final UserSettings settings = UserSettings(prefs);
+  final LanguageManager language = LanguageManager(prefs);
+  final TodoManager todos = TodoManager(
+    prefs: prefs,
+    settings: settings,
+    language: language,
+  );
+  final ProfileManager profiles = ProfileManager(prefs);
+  final PromptManager prompts = PromptManager(prefs);
   final DonationManager donations = DonationManager();
 
   await todos.recordAppOpen();
-  if (settings.todoNotificationsEnabled) {
-    await todos.scheduleReminderIfNeeded();
-  }
+  // Notification scheduling is now handled by TodoManager's constructor
+  // and listener, but we call it once to be sure on app start.
+  await todos.scheduleReminderIfNeeded();
 
   runApp(BoxTimerApp(
     settings: settings,

@@ -10,13 +10,17 @@ import 'package:boxing_timer_flutter/core/models.dart';
 /// Stores user-created fight presets as JSON in shared preferences under the
 /// same key the iOS app uses in UserDefaults ('customProfiles').
 class ProfileManager extends ChangeNotifier {
+  ProfileManager(this._prefs) {
+    _load();
+  }
+
   static const String _prefsKey = 'customProfiles';
 
+  final SharedPreferences _prefs;
   List<FightPreset> customProfiles = [];
 
-  Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_prefsKey);
+  void _load() {
+    final raw = _prefs.getString(_prefsKey);
     if (raw == null || raw.isEmpty) return;
 
     try {
@@ -26,7 +30,6 @@ class ProfileManager extends ChangeNotifier {
             .whereType<Map<String, dynamic>>()
             .map(FightPreset.fromJson)
             .toList();
-        notifyListeners();
       }
     } catch (e) {
       debugPrint('ProfileManager: could not load custom profiles: $e');
@@ -47,9 +50,8 @@ class ProfileManager extends ChangeNotifier {
   }
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
     final encoded =
         jsonEncode(customProfiles.map((profile) => profile.toJson()).toList());
-    await prefs.setString(_prefsKey, encoded);
+    await _prefs.setString(_prefsKey, encoded);
   }
 }

@@ -4,7 +4,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../core/design_system.dart';
 import '../core/language_manager.dart';
-import '../services/todo_manager.dart';
 import '../services/user_settings.dart';
 import 'donation_screen.dart';
 
@@ -60,16 +59,7 @@ class SettingsScreen extends StatelessWidget {
                     _toggle(
                       t.todoNotifications,
                       settings.todoNotificationsEnabled,
-                      (bool v) async {
-                        final TodoManager todos =
-                            context.read<TodoManager>();
-                        await settings.setTodoNotificationsEnabled(v);
-                        if (v) {
-                          await todos.scheduleReminderIfNeeded();
-                        } else {
-                          await todos.cancelNotifications();
-                        }
-                      },
+                      settings.setTodoNotificationsEnabled,
                     ),
                   ]),
                   const SizedBox(height: 20),

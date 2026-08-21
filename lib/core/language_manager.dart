@@ -52,9 +52,18 @@ enum AppLanguage {
 class LanguageManager extends ChangeNotifier {
   static const String _prefsKey = 'appLanguage';
 
+  final SharedPreferences _prefs;
   AppLanguage current;
 
-  LanguageManager() : current = _deviceDefault();
+  LanguageManager(this._prefs) : current = _deviceDefault() {
+    final saved = _prefs.getString(_prefsKey);
+    if (saved != null) {
+      final language = AppLanguage.fromCode(saved);
+      if (language != null) {
+        current = language;
+      }
+    }
+  }
 
   static AppLanguage _deviceDefault() {
     final deviceCode = PlatformDispatcher.instance.locale.languageCode;
@@ -64,26 +73,10 @@ class LanguageManager extends ChangeNotifier {
   /// Kurzform: lang.t.xxx
   Translations get t => Translations.all[current]!;
 
-  Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_prefsKey);
-    if (saved != null) {
-      final language = AppLanguage.fromCode(saved);
-      if (language != null) {
-        current = language;
-      }
-    } else {
-      // Erster Start – Gerätesprache automatisch erkennen.
-      current = _deviceDefault();
-    }
-    notifyListeners();
-  }
-
   Future<void> setLanguage(AppLanguage language) async {
     current = language;
     notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefsKey, language.code);
+    await _prefs.setString(_prefsKey, language.code);
   }
 
   /// Übersetzt den internen Preset-Namen in die gewählte Sprache.
@@ -268,6 +261,10 @@ class Translations {
   final String privacyS4Text;
   final String privacyOpenBrowser;
 
+  // Notification texts
+  final String todoNotificationSingle;
+  final String todoNotificationMultiple;
+
   const Translations({
     required this.phaseWarmUp,
     required this.phaseRest,
@@ -411,6 +408,8 @@ class Translations {
     required this.privacyS4Title,
     required this.privacyS4Text,
     required this.privacyOpenBrowser,
+    required this.todoNotificationSingle,
+    required this.todoNotificationMultiple,
   });
 
   /// Übersetzt den internen Preset-Namen in die gewählte Sprache.
@@ -586,6 +585,8 @@ class Translations {
       privacyS4Text:
           'Nur Live Activity (Timer auf dem Sperrbildschirm, optional). Keine anderen Berechtigungen.',
       privacyOpenBrowser: 'Vollständige Version im Browser öffnen',
+      todoNotificationSingle: 'Du hast noch 1 offenes Todo!',
+      todoNotificationMultiple: 'Du hast noch %d offene Todos!',
     ),
     AppLanguage.en: const Translations(
       phaseWarmUp: 'WARM UP',
@@ -734,6 +735,8 @@ class Translations {
       privacyS4Title: 'Permissions',
       privacyS4Text: 'Only Live Activity (timer on the lock screen, optional). No other permissions.',
       privacyOpenBrowser: 'Open full version in browser',
+      todoNotificationSingle: 'You have 1 open todo!',
+      todoNotificationMultiple: 'You have %d open todos!',
     ),
     AppLanguage.ar: const Translations(
       phaseWarmUp: 'إحماء',
@@ -882,6 +885,8 @@ class Translations {
       privacyS4Title: 'الأذونات',
       privacyS4Text: 'فقط Live Activity (المؤقت على شاشة القفل، اختياري). لا توجد أذونات أخرى.',
       privacyOpenBrowser: 'فتح النسخة الكاملة في المتصفح',
+      todoNotificationSingle: 'لديك مهمة واحدة مفتوحة!',
+      todoNotificationMultiple: 'لديك %d مهام مفتوحة!',
     ),
     AppLanguage.es: const Translations(
       phaseWarmUp: 'CALENTAMIENTO',
@@ -1032,6 +1037,8 @@ class Translations {
       privacyS4Text:
           'Solo Live Activity (temporizador en la pantalla de bloqueo, opcional). Sin otros permisos.',
       privacyOpenBrowser: 'Abrir versión completa en el navegador',
+      todoNotificationSingle: '¡Tienes 1 tarea pendiente!',
+      todoNotificationMultiple: '¡Tienes %d tareas pendientes!',
     ),
     AppLanguage.fr: const Translations(
       phaseWarmUp: 'ÉCHAUFFEMENT',
@@ -1184,6 +1191,8 @@ class Translations {
       privacyS4Text:
           "Uniquement Live Activity (minuterie sur l'écran de verrouillage, optionnel). Aucune autre autorisation.",
       privacyOpenBrowser: 'Ouvrir la version complète dans le navigateur',
+      todoNotificationSingle: 'Vous avez 1 tâche en cours !',
+      todoNotificationMultiple: 'Vous avez %d tâches en cours !',
     ),
     AppLanguage.ru: const Translations(
       phaseWarmUp: 'РАЗМИНКА',
@@ -1333,6 +1342,8 @@ class Translations {
       privacyS4Text:
           'Только Live Activity (таймер на экране блокировки, опционально). Никаких других разрешений.',
       privacyOpenBrowser: 'Открыть полную версию в браузере',
+      todoNotificationSingle: 'У вас 1 активная задача!',
+      todoNotificationMultiple: 'У вас %d активных задач!',
     ),
     AppLanguage.pt: const Translations(
       phaseWarmUp: 'AQUECIMENTO',
@@ -1482,6 +1493,8 @@ class Translations {
       privacyS4Title: 'Permissões',
       privacyS4Text: 'Apenas Live Activity (timer na tela de bloqueio, opcional). Sem outras permissões.',
       privacyOpenBrowser: 'Abrir versão completa no navegador',
+      todoNotificationSingle: 'Você tem 1 tarefa aberta!',
+      todoNotificationMultiple: 'Você tem %d tarefas abertas!',
     ),
   };
 }

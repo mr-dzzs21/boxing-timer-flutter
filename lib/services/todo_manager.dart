@@ -15,16 +15,31 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'package:boxing_timer_flutter/core/language_manager.dart';
 import 'package:boxing_timer_flutter/core/models.dart';
+import 'package:boxing_timer_flutter/services/user_settings.dart';
 
 class TodoManager extends ChangeNotifier {
+  TodoManager({
+    required SharedPreferences prefs,
+    required UserSettings settings,
+    required LanguageManager language,
+  })  : _prefs = prefs,
+        _settings = settings,
+        _language = language {
+    _load();
+    _settings.addListener(scheduleReminderIfNeeded);
+  }
+
   static const String _todosKey = 'todos';
   static const String _appOpenTimesKey = 'appOpenTimes';
-  static const String _notificationsEnabledKey = 'todoNotificationsEnabled';
 
   /// Numeric stand-in for the iOS notification identifier "todo_daily".
   static const int _notificationId = 1001;
 
+  final SharedPreferences _prefs;
+  final UserSettings _settings;
+  final LanguageManager _language;
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
   final Random _random = Random();
@@ -37,9 +52,8 @@ class TodoManager extends ChangeNotifier {
 
   List<Todo> get done => todos.where((Todo t) => t.isDone).toList();
 
-  Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_todosKey);
+  void _load() {
+    final raw = _prefs.getString(_todosKey);
     if (raw != null) {
       try {
         final decoded = jsonDecode(raw) as List<dynamic>;
@@ -50,7 +64,6 @@ class TodoManager extends ChangeNotifier {
         todos = <Todo>[];
       }
     }
-    notifyListeners();
   }
 
   Future<void> add(String title) async {
@@ -91,19 +104,18 @@ class TodoManager extends ChangeNotifier {
     final now = DateTime.now();
     if (now.hour < 7) return;
     final minutesSinceMidnight = now.hour * 60 + now.minute;
-    final prefs = await SharedPreferences.getInstance();
-    var opens = _loadOpenTimes(prefs)..add(minutesSinceMidnight);
+    var opens = _loadOpenTimes()..add(minutesSinceMidnight);
     if (opens.length > 20) {
       opens = opens.sublist(opens.length - 20);
     }
-    await prefs.setStringList(
+    await _prefs.setStringList(
       _appOpenTimesKey,
       opens.map((int m) => m.toString()).toList(),
     );
   }
 
-  List<int> _loadOpenTimes(SharedPreferences prefs) {
-    final stored = prefs.getStringList(_appOpenTimesKey) ?? <String>[];
+  List<int> _loadOpenTimes() {
+    final stored = _prefs.getStringList(_appOpenTimesKey) ?? <String>[];
     return stored
         .map((String s) => int.tryParse(s))
         .whereType<int>()
@@ -111,8 +123,8 @@ class TodoManager extends ChangeNotifier {
   }
 
   /// Average open time; defaults to 09:00 with fewer than 3 data points.
-  ({int hour, int minute}) _averageNotificationTime(SharedPreferences prefs) {
-    final opens = _loadOpenTimes(prefs);
+  ({int hour, int minute}) _averageNotificationTime() {
+    final opens = _loadOpenTimes();
     if (opens.length < 3) return (hour: 9, minute: 0);
     final avg = opens.reduce((int a, int b) => a + b) ~/ opens.length;
     return (hour: avg ~/ 60, minute: avg % 60);
@@ -121,8 +133,7 @@ class TodoManager extends ChangeNotifier {
   // MARK: - Notifications (iOS: scheduleNotificationIfNeeded)
 
   Future<void> scheduleReminderIfNeeded() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!(prefs.getBool(_notificationsEnabledKey) ?? false)) {
+    if (!_settings.todoNotificationsEnabled) {
       await cancelNotifications();
       return;
     }
@@ -135,12 +146,13 @@ class TodoManager extends ChangeNotifier {
     try {
       await _ensureNotificationsReady();
 
-      // Exact iOS v1.3 body strings (hardcoded German, as shipped).
+      final Translations t = _language.t;
       final body = openTodos.length == 1
-          ? 'Du hast noch 1 offenes Todo!'
-          : 'Du hast noch ${openTodos.length} offene Todos!';
+          ? t.todoNotificationSingle
+          : t.todoNotificationMultiple
+              .replaceFirst('%d', openTodos.length.toString());
 
-      final time = _averageNotificationTime(prefs);
+      final time = _averageNotificationTime();
       final now = DateTime.now();
       var next =
           DateTime(now.year, now.month, now.day, time.hour, time.minute);
@@ -211,8 +223,7 @@ class TodoManager extends ChangeNotifier {
   // MARK: - Persistence
 
   Future<void> _save() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
+    await _prefs.setString(
       _todosKey,
       jsonEncode(todos.map((Todo t) => t.toJson()).toList()),
     );
@@ -223,5 +234,11 @@ class TodoManager extends ChangeNotifier {
     final time = DateTime.now().microsecondsSinceEpoch.toRadixString(16);
     final salt = _random.nextInt(0x7FFFFFFF).toRadixString(16);
     return '$time-$salt';
+  }
+
+  @override
+  void dispose() {
+    _settings.removeListener(scheduleReminderIfNeeded);
+    super.dispose();
   }
 }
