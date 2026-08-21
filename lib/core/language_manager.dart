@@ -503,7 +503,7 @@ class Translations {
       levelBeginner: 'Anfänger',
       levelIntermediate: 'Fortgeschritten',
       levelAdvanced: 'Profi',
-      historyTitle: 'History',
+      historyTitle: 'Verlauf',
       noWorkouts: 'Keine Workouts',
       noWorkoutsDesc: 'Deine abgeschlossenen Workouts erscheinen hier',
       deleteAll: 'Alle löschen',
