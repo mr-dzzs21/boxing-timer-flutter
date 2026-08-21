@@ -97,8 +97,9 @@ Optionale Trinkgeld-Funktion zur Unterstützung der Entwicklung — völlig frei
 
 ## Contact & policy
 - Contact email: `box.timer.app@gmail.com`
-- Privacy policy URL: `https://mr-dzzs21.github.io/Box-Interval-Timer/privacy-policy.html`
-  (The existing policy is app-agnostic — "no data collected" — and covers the Android app too.)
+- Privacy policy URL: `https://mr-dzzs21.github.io/boxing-timer-flutter/privacy-policy.html`
+  (Android-specific policy: no data collected; in-app purchases via Google Play.
+  Served via GitHub Pages from this repo's /docs folder.)
 
 ## Content rating (IARC questionnaire answers)
 - Category: Utility / Productivity (a timer/fitness app)

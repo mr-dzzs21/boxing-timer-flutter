@@ -359,7 +359,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                   const SizedBox(height: 8),
                   TextButton.icon(
                     onPressed: () => SettingsScreen._open(
-                      'https://mr-dzzs21.github.io/Box-Interval-Timer/privacy-policy.html',
+                      'https://mr-dzzs21.github.io/boxing-timer-flutter/privacy-policy.html',
                     ),
                     icon: const Icon(Icons.public, color: DS.accent, size: 18),
                     label: Text(
