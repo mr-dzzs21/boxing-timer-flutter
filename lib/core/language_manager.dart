@@ -586,7 +586,7 @@ class Translations {
           'Nein. Die App sendet keine Daten an Server, verwendet keine Analyse-Tools und benötigt keine Internetverbindung.',
       privacyS3Title: 'In-App Käufe',
       privacyS3Text:
-          'Optionale Donations werden vollständig über Apple In-App Purchase abgewickelt. Wir haben keinen Zugriff auf Zahlungsdaten.',
+          'Optionale Donations werden vollständig über Google Play In-App Purchase abgewickelt. Wir haben keinen Zugriff auf Zahlungsdaten.',
       privacyS4Title: 'Berechtigungen',
       privacyS4Text:
           'Nur Live Activity (Timer auf dem Sperrbildschirm, optional). Keine anderen Berechtigungen.',
@@ -739,7 +739,7 @@ class Translations {
           'No. The app sends no data to servers, uses no analytics tools, and requires no internet connection.',
       privacyS3Title: 'In-App Purchases',
       privacyS3Text:
-          'Optional donations are handled entirely through Apple In-App Purchase. We have no access to payment data.',
+          'Optional donations are handled entirely through Google Play In-App Purchase. We have no access to payment data.',
       privacyS4Title: 'Permissions',
       privacyS4Text: 'Only Live Activity (timer on the lock screen, optional). No other permissions.',
       privacyOpenBrowser: 'Open full version in browser',
@@ -891,7 +891,7 @@ class Translations {
           'لا. لا ترسل التطبيقة بيانات إلى خوادم، ولا تستخدم أدوات تحليل، ولا تحتاج إلى اتصال بالإنترنت.',
       privacyS3Title: 'المشتريات داخل التطبيق',
       privacyS3Text:
-          'تُعالَج التبرعات الاختيارية بالكامل عبر نظام Apple للشراء داخل التطبيق. ليس لدينا أي وصول إلى بيانات الدفع.',
+          'تُعالَج التبرعات الاختيارية بالكامل عبر نظام Google Play للشراء داخل التطبيق. ليس لدينا أي وصول إلى بيانات الدفع.',
       privacyS4Title: 'الأذونات',
       privacyS4Text: 'فقط Live Activity (المؤقت على شاشة القفل، اختياري). لا توجد أذونات أخرى.',
       privacyOpenBrowser: 'فتح النسخة الكاملة في المتصفح',
@@ -1044,7 +1044,7 @@ class Translations {
           'No. La app no envía datos a servidores, no utiliza herramientas de análisis y no requiere conexión a internet.',
       privacyS3Title: 'Compras dentro de la app',
       privacyS3Text:
-          'Las donaciones opcionales se gestionan completamente a través de Apple In-App Purchase. No tenemos acceso a datos de pago.',
+          'Las donaciones opcionales se gestionan completamente a través de Google Play In-App Purchase. No tenemos acceso a datos de pago.',
       privacyS4Title: 'Permisos',
       privacyS4Text:
           'Solo Live Activity (temporizador en la pantalla de bloqueo, opcional). Sin otros permisos.',
@@ -1200,7 +1200,7 @@ class Translations {
           "Non. L'app n'envoie aucune donnée à des serveurs, n'utilise aucun outil d'analyse et ne nécessite aucune connexion internet.",
       privacyS3Title: 'Achats intégrés',
       privacyS3Text:
-          "Les dons optionnels sont entièrement traités via Apple In-App Purchase. Nous n'avons aucun accès aux données de paiement.",
+          "Les dons optionnels sont entièrement traités via Google Play In-App Purchase. Nous n'avons aucun accès aux données de paiement.",
       privacyS4Title: 'Autorisations',
       privacyS4Text:
           "Uniquement Live Activity (minuterie sur l'écran de verrouillage, optionnel). Aucune autre autorisation.",
@@ -1353,7 +1353,7 @@ class Translations {
           'Нет. Приложение не отправляет данные на серверы, не использует инструменты аналитики и не требует подключения к интернету.',
       privacyS3Title: 'Встроенные покупки',
       privacyS3Text:
-          'Необязательные пожертвования обрабатываются полностью через Apple In-App Purchase. У нас нет доступа к платёжным данным.',
+          'Необязательные пожертвования обрабатываются полностью через Google Play In-App Purchase. У нас нет доступа к платёжным данным.',
       privacyS4Title: 'Разрешения',
       privacyS4Text:
           'Только Live Activity (таймер на экране блокировки, опционально). Никаких других разрешений.',
@@ -1507,7 +1507,7 @@ class Translations {
           'Não. O aplicativo não envia dados para servidores, não utiliza ferramentas de análise e não requer conexão com a internet.',
       privacyS3Title: 'Compras no App',
       privacyS3Text:
-          'Doações opcionais são processadas inteiramente através da Apple In-App Purchase. Não temos acesso aos dados de pagamento.',
+          'Doações opcionais são processadas inteiramente através da Google Play In-App Purchase. Não temos acesso aos dados de pagamento.',
       privacyS4Title: 'Permissões',
       privacyS4Text: 'Apenas Live Activity (timer na tela de bloqueio, opcional). Sem outras permissões.',
       privacyOpenBrowser: 'Abrir versão completa no navegador',
