@@ -145,7 +145,7 @@ class SoundManager {
   }
 
   /// Announces a combo. Prefers a bundled premium voice clip
-  /// (`assets/combos/1_2_3.mp3` for combo [1,2,3]) for the crispest, most
+  /// (`assets/combos/1_2_3.wav` for combo [1,2,3]) for the crispest, most
   /// consistent sound; falls back to [speakCombo] (device TTS)
   /// with [fallbackPhrase] when the clip isn't bundled, so the feature works
   /// with or without the clips.
@@ -155,7 +155,7 @@ class SoundManager {
     required bool soundEnabled,
   }) async {
     if (!soundEnabled) return;
-    final String rel = 'combos/${combo.join('_')}.mp3';
+    final String rel = 'combos/${combo.join('_')}.wav';
     bool hasClip = true;
     try {
       await rootBundle.load('assets/$rel');
