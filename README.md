@@ -10,16 +10,19 @@ A cross-platform rebuild of my shipped iOS app **[Boxing Interval Timer](https:/
 > **iOS original:** [mr-dzzs21/Box-Interval-Timer](https://github.com/mr-dzzs21/Box-Interval-Timer) · [App Store](https://apps.apple.com/app/id6759615674)
 > **Status:** feature-complete and release-configured (signed App Bundle); Play Store submission in progress.
 
-<!--
 ## Screenshots
-TODO: drop Android screenshots into docs/screenshots/ and uncomment this block:
+
 <p align="center">
-  <img src="docs/screenshots/fight-timer.png" width="24%" />
-  <img src="docs/screenshots/intervals.png"  width="24%" />
-  <img src="docs/screenshots/stats.png"       width="24%" />
-  <img src="docs/screenshots/history.png"     width="24%" />
+  <img src="docs/screenshots/01-fight-timer.png" width="30%" />
+  <img src="docs/screenshots/02-fight-rest.png"  width="30%" />
+  <img src="docs/screenshots/03-intervals.png"   width="30%" />
 </p>
--->
+<p align="center">
+  <img src="docs/screenshots/04-stats.png"     width="30%" />
+  <img src="docs/screenshots/06-history.png"   width="30%" />
+  <img src="docs/screenshots/05-stopwatch.png" width="30%" />
+</p>
+<p align="center"><sub>Fight timer (round / rest — the background follows the phase) · interval setup · statistics · history · stopwatch</sub></p>
 
 ## Features
 
