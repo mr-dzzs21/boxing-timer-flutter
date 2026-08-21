@@ -53,6 +53,14 @@ class SettingsScreen extends StatelessWidget {
                     const Divider(color: DS.divider, height: 1),
                     _toggle(t.warningEnabled, settings.warningEnabled,
                         settings.setWarningEnabled),
+                    const Divider(color: DS.divider, height: 1),
+                    _toggle(t.comboTrainer, settings.comboTrainerEnabled,
+                        settings.setComboTrainerEnabled),
+                    if (settings.comboTrainerEnabled) ...<Widget>[
+                      const Divider(color: DS.divider, height: 1),
+                      _toggle(t.comboUseNames, settings.comboUseNames,
+                          settings.setComboUseNames),
+                    ],
                   ]),
                   const SizedBox(height: 20),
                   _section('Todos', <Widget>[

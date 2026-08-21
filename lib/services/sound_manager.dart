@@ -123,4 +123,21 @@ class SoundManager {
       debugPrint('SoundManager: could not speak round: $e');
     }
   }
+
+  /// Speaks a Combo Trainer phrase (e.g. "1 2 3" or "Jab, Cross, Lead Hook")
+  /// via TTS — always English, slightly faster than round announcements to
+  /// match the pace combos are called at. Cancels any speech in progress.
+  Future<void> speakCombo(String phrase, {required bool soundEnabled}) async {
+    if (!soundEnabled) return;
+
+    try {
+      await _tts.stop();
+      await _tts.setLanguage('en-US');
+      await _tts.setSpeechRate(0.55);
+      await _tts.setVolume(1.0);
+      await _tts.speak(phrase);
+    } catch (e) {
+      debugPrint('SoundManager: could not speak combo: $e');
+    }
+  }
 }

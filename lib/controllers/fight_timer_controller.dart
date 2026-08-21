@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../core/combo_trainer.dart';
 import '../core/design_system.dart';
 import '../core/language_manager.dart';
 import '../core/models.dart';
@@ -45,9 +46,18 @@ class FightTimerController extends ChangeNotifier {
   int? _savedWorkoutId;
   final SoundManager _sound = SoundManager.instance;
 
+  // Combo Trainer: announces random punch combos during rounds. Timing is
+  // driven off the running ticker via real elapsed time, so it survives
+  // pause/resume and never fires on a skip (which advances no wall-clock time).
+  final ComboTrainer _comboTrainer = ComboTrainer();
+  DateTime? _lastComboTime;
+  int _nextComboDelay = 0;
+
   bool get _soundOn => settings?.soundEnabled ?? true;
   bool get _vibrationOn => settings?.vibrationEnabled ?? true;
   bool get _warningOn => settings?.warningEnabled ?? true;
+  bool get _comboOn => settings?.comboTrainerEnabled ?? false;
+  bool get _comboUseNames => settings?.comboUseNames ?? false;
 
   double get progress => _lastSnapshot?.progress ?? 0;
 
@@ -108,6 +118,9 @@ class FightTimerController extends ChangeNotifier {
     status = TimerStatus.paused;
     _stopTicker();
     WakelockPlus.disable();
+    // Drop the combo clock; it re-initializes on the next running tick so a
+    // long pause doesn't trigger a burst of combos on resume.
+    _lastComboTime = null;
     _apply(_engine.snapshot(now), now, allowEffects: false);
     notifyListeners();
   }
@@ -137,6 +150,7 @@ class FightTimerController extends ChangeNotifier {
     _totalElapsedSeconds = 0;
     _warnedSegmentIndex = null;
     _savedWorkoutId = null;
+    _lastComboTime = null;
     hasSavedCurrentWorkout = false;
     saveErrorMessage = null;
     final DateTime now = DateTime.now();
@@ -222,6 +236,7 @@ class FightTimerController extends ChangeNotifier {
     _totalElapsedSeconds = 0;
     _warnedSegmentIndex = null;
     _savedWorkoutId = null;
+    _lastComboTime = null;
     hasSavedCurrentWorkout = false;
     saveErrorMessage = null;
     _lastSnapshot = _engine.snapshot(now);
@@ -256,6 +271,7 @@ class FightTimerController extends ChangeNotifier {
     if (allowEffects) {
       _playTransitionEffects(previous, snapshot);
       _playWarningIfNeeded(previous, snapshot);
+      _handleCombo(previous, snapshot, now);
     }
 
     _lastSnapshot = snapshot;
@@ -315,6 +331,39 @@ class FightTimerController extends ChangeNotifier {
 
     _sound.play(SoundType.roundWarning, soundEnabled: _soundOn);
     _sound.haptic(SoundType.roundWarning, vibrationEnabled: _vibrationOn);
+  }
+
+  /// Announces a random combo during a round at randomized intervals. Only
+  /// runs while a round is actually running (called from the ticker with
+  /// allowEffects); a skip changes segment but no wall-clock time, so it can't
+  /// trigger a combo.
+  void _handleCombo(
+    TimerSessionSnapshot? previous,
+    TimerSessionSnapshot snapshot,
+    DateTime now,
+  ) {
+    if (!_comboOn ||
+        snapshot.phase != TimerPhase.round ||
+        status != TimerStatus.running) {
+      return;
+    }
+    final bool enteredRound =
+        previous == null || previous.segmentIndex != snapshot.segmentIndex;
+    // Start (or restart, after a pause) the combo clock without an immediate
+    // announcement — the round-start bell/announcement just played.
+    if (enteredRound || _lastComboTime == null) {
+      _lastComboTime = now;
+      _nextComboDelay = _comboTrainer.nextDelaySeconds();
+      return;
+    }
+    if (now.difference(_lastComboTime!).inSeconds < _nextComboDelay) return;
+
+    _sound.speakCombo(
+      ComboTrainer.phraseFor(_comboTrainer.nextCombo(), useNames: _comboUseNames),
+      soundEnabled: _soundOn,
+    );
+    _lastComboTime = now;
+    _nextComboDelay = _comboTrainer.nextDelaySeconds();
   }
 
   void _completeWorkout(DateTime now) {
